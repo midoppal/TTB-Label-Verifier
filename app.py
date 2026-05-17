@@ -12,12 +12,17 @@ from ocr_utils import (
 from verification import verify_label
 import time
 
+
+
 st.set_page_config(
     page_title="AI Alcohol Label Verification",
     page_icon="🍾",
     layout="wide"
 )
 
+#########################################
+# Batch Templates
+#########################################
 BATCH_TEMPLATE_COLUMNS = [
     "file",
     "page",
@@ -73,6 +78,9 @@ COLUMN_ALIASES = {
 }
 
 
+#########################################
+# Batch Helpers
+#########################################
 def normalize_column_name(column_name):
     return re.sub(r"[^a-z0-9]+", "_", str(column_name).strip().lower()).strip("_")
 
@@ -236,6 +244,9 @@ def build_batch_template_csv():
     return pd.DataFrame([BATCH_TEMPLATE_ROW], columns=BATCH_TEMPLATE_COLUMNS).to_csv(index=False).encode("utf-8")
 
 
+#########################################
+# Table Styling
+#########################################
 def highlight_status(row):
     status = row["Status"]
 
@@ -251,6 +262,9 @@ def highlight_status(row):
         return [""] * len(row)
 
 
+#########################################
+# OCR
+#########################################
 def get_highlight_terms(file_df):
     ignored_detected_values = {
         "",
@@ -339,6 +353,9 @@ def get_label_pages(uploaded_file):
     return [(uploaded_file.name, load_image(uploaded_file))]
 
 
+#########################################
+# Headers
+#########################################
 st.title("AI-Powered Alcohol Label Verification App")
 
 st.write(
@@ -356,6 +373,9 @@ st.info(
 )
 
 
+#########################################
+# Sidebar Inputs
+#########################################
 with st.sidebar:
     st.header("Application Details")
 
@@ -466,6 +486,9 @@ for batch_error in batch_manifest_errors:
 if batch_manifest:
     st.success(f"Loaded {len(batch_manifest)} batch application mapping(s) from CSV.")
 
+#########################################
+# Label Processing
+#########################################
 if uploaded_files:
     all_results = []
     image_by_file = {}
@@ -531,7 +554,6 @@ if uploaded_files:
 
     results_df = pd.DataFrame(all_results)
 
-    # Put File first so the accumulated table is easier to read
     preferred_column_order = [
         "File",
         "Field",
@@ -548,7 +570,6 @@ if uploaded_files:
 
     results_df = results_df[preferred_column_order]
 
-    # Sort by file, then by a meaningful field order
     field_order = {
         "Brand Name": 1,
         "Class / Type": 2,
@@ -569,6 +590,9 @@ if uploaded_files:
 
     st.subheader("Per-File Verification Results")
 
+    #########################################
+    # File Results
+    #########################################
     for file_name, file_df in results_df.groupby("File"):
         with st.expander(f"Results for {file_name}", expanded=True):
             status_counts = file_df["Status"].value_counts().to_dict()

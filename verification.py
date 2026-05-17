@@ -11,7 +11,10 @@ STANDARD_GOV_WARNING = (
     "HEALTH PROBLEMS."
 )
 
-# determines Application Fields to be checked
+#########################################
+# Requirements
+#########################################
+
 def get_requirement_profile(expected_fields):
     beverage_type = expected_fields.get("beverage_type", "Distilled Spirits")
     is_imported = expected_fields.get("is_imported", False)
@@ -60,6 +63,7 @@ def get_requirement_profile(expected_fields):
 
     return profile
 
+
 def normalize_text(text):
     if not text:
         return ""
@@ -73,7 +77,7 @@ def get_text_lines(text):
     return [line.strip() for line in text.splitlines() if line.strip()]
 
 
-# finds the ocr line that best matches the expected field
+
 def best_line_match(expected, text):
     lines = get_text_lines(text)
 
@@ -92,7 +96,9 @@ def best_line_match(expected, text):
 
     return best_line, best_score
 
-# checks for a producer/importer statement
+#########################################
+# Address Checks
+#########################################
 def contains_address_like_text(text):
     text_norm = normalize_text(text)
 
@@ -120,7 +126,9 @@ def contains_address_like_text(text):
 
     return has_producer_phrase and (has_city_state or has_zip)
 
-# expected value check using closes ocr line
+#########################################
+# Field Checks
+#########################################
 def check_expected_text_field(field_name, expected_value, ocr_text, threshold=80):
     detected_line, score = best_line_match(expected_value, ocr_text)
 
@@ -180,6 +188,9 @@ def check_name_address(ocr_text, expected_value):
     return base_result
 
 
+#########################################
+# Origin Checks
+#########################################
 def check_country_of_origin(ocr_text, expected_country):
     """
     Check country of origin for imported products.
@@ -236,6 +247,9 @@ def check_country_of_origin(ocr_text, expected_country):
     }
     
     
+#########################################
+# Fuzzy Compare
+#########################################
 def fuzzy_compare(expected, detected, threshold=85):
     """
     Compare expected and detected strings.
@@ -260,6 +274,9 @@ def fuzzy_compare(expected, detected, threshold=85):
         return "Mismatch", score
 
 
+#########################################
+# Field Extraction
+#########################################
 def extract_abv(text):
     """
     Extract ABV-like values:
@@ -299,6 +316,9 @@ def extract_net_contents(text):
     return ""
 
 
+#########################################
+# Warning Checks
+#########################################
 def check_government_warning(text):
     """
     Check whether government warning appears.
@@ -348,6 +368,9 @@ def check_government_warning(text):
     }
 
 
+#########################################
+# Main Verification
+#########################################
 def verify_label(ocr_text, expected_fields):
     """
     Main verification function.

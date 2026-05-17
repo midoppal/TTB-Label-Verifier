@@ -4,7 +4,6 @@ import cv2
 import numpy as np
 from io import BytesIO
 
-
 def load_image(uploaded_file):
     return Image.open(uploaded_file).convert("RGB")
 
@@ -64,10 +63,10 @@ def render_pdf_pages(uploaded_file, scale=2):
         pdf_document.close()
 
 
+
 def extract_text_from_image(processed_image):
     text = pytesseract.image_to_string(processed_image)
     return text
-
 
 # estimate if the image is blurry
 def estimate_image_quality(processed_image):
