@@ -4,13 +4,11 @@
 
 This project is a Streamlit prototype for alcohol label compliance review. It helps a reviewer compare text extracted from label artwork against the expected values from a label application.
 
-The app focuses on the high-volume checks described in the take-home prompt: brand name, class/type designation, alcohol content, net contents, producer/importer information, country of origin for imported products, additional disclosures, and the mandatory government health warning statement.
+The app focuses on the high volume checks: brand name, class/type designation, alcohol content, net contents, producer/importer information, country of origin for imported products, additional disclosures, and the mandatory government health warning statement.
 
 The goal is not to replace a trained TTB reviewer. The goal is to reduce routine visual matching work, surface likely mismatches quickly, and provide a simple workflow that a compliance agent can use without technical training.
 
 ## Deployed Application
-
-Add the deployed Streamlit URL here before submitting:
 
 ```text
 https://ttb-label-verifier.streamlit.app
@@ -54,7 +52,7 @@ https://github.com/midoppal/TTB-Label-Verifier
 
 ## Why This Approach
 
-The stakeholder notes emphasized that reviewers spend significant time on repetitive matching tasks. This prototype therefore uses OCR plus deterministic comparison logic instead of a fully generative AI workflow.
+It was emphasized that reviewers spend significant time on repetitive matching tasks. This prototype therefore uses OCR plus deterministic comparison logic instead of a fully generative AI workflow.
 
 That choice has a few advantages for this use case:
 
@@ -97,7 +95,7 @@ The app uses fuzzy matching for fields such as brand name and class/type because
 
 This app requires the Tesseract executable in addition to the Python package `pytesseract`.
 
-On Windows, install Tesseract from the official installer or a package manager, then make sure the Tesseract executable is available on your PATH.
+On Windows, install Tesseract from the official installer or a package manager, then make sure the Tesseract executable is available in your PATH.
 
 On macOS:
 
