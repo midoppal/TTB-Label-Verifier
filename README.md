@@ -25,6 +25,7 @@ https://github.com/midoppal/TTB-Label-Verifier
 ## Key Features
 
 - Upload one or more label images in PNG, JPG, JPEG, or PDF format
+- Upload an optional CSV of expected fields for batches where each label has different application data
 - Render PDF label submissions page by page for OCR and review
 - Extract label text using Tesseract OCR
 - Compare extracted text against expected application fields
@@ -48,6 +49,7 @@ https://github.com/midoppal/TTB-Label-Verifier
 - Display raw OCR text for each file to support manual review
 - Show a side-by-side label preview with highlighted extracted text
 - Show per-file review results and an accumulated batch report
+- Track whether each file used sidebar defaults or a matched CSV row
 - Export the full batch report as a CSV
 
 ## Why This Approach
@@ -57,7 +59,7 @@ It was emphasized that reviewers spend significant time on repetitive matching t
 That choice has a few advantages for this use case:
 
 - It is fast enough for the expected workflow.
-- It can run locally without depending on blocked outbound cloud API calls.
+- It can run locally without depending on blocked cloud API calls.
 - It produces explainable results with match scores and reviewer notes.
 - It keeps the reviewer in control for judgment-heavy or ambiguous cases.
 
@@ -151,10 +153,29 @@ http://localhost:8501
 1. Select the beverage type in the sidebar.
 2. Mark whether the product is imported.
 3. Enter the expected application values.
-4. Upload one or more label images or PDFs.
-5. Review the per-file results.
-6. Use the accumulated batch report for the full upload set.
-7. Download the CSV report if needed.
+4. Optionally upload a batch CSV when each uploaded label has different expected application values.
+5. Upload one or more label images or PDFs.
+6. Review the per-file results.
+7. Use the accumulated batch report for the full upload set.
+8. Download the CSV report if needed.
+
+### Batch CSV Format
+
+The batch CSV is optional. If no CSV is uploaded, every label is checked against the sidebar values. If a CSV is uploaded, the app matches rows by uploaded file name. For PDF files, use the optional `page` column to target individual pages. Blank text cells are treated as not provided, while missing columns fall back to the sidebar values.
+
+Recommended columns:
+
+```text
+file,page,beverage_type,is_imported,wine_abv_category,malt_added_alcohol,brand_name,class_type,abv,net_contents,producer_name_address,country_of_origin,additional_disclosures
+```
+
+Example:
+
+```csv
+file,page,beverage_type,is_imported,wine_abv_category,malt_added_alcohol,brand_name,class_type,abv,net_contents,producer_name_address,country_of_origin,additional_disclosures
+old_tom_label.png,,Distilled Spirits,false,,false,OLD TOM DISTILLERY,Kentucky Straight Bourbon Whiskey,45%,750 mL,"Bottled by Old Tom Distillery, Louisville, KY",,
+imported_wine.pdf,1,Wine,true,7% or more ABV,false,CHATEAU EXAMPLE,Red Wine,13.5%,750 mL,"Imported by Example Imports, Miami, FL",France,Contains: sulfites
+```
 
 ## Verification Logic
 
@@ -168,6 +189,7 @@ The verification layer combines field-specific extraction with fuzzy matching:
 - Government warning is checked for the required uppercase prefix and approximate standard warning text.
 - Additional disclosures are optional and checked only when the user provides expected disclosure text.
 - PDF submissions are rendered page by page, then processed through the same OCR and verification workflow as image uploads.
+- Batch CSV rows can provide different expected values for each uploaded file or PDF page.
 
 Results use the following statuses:
 
@@ -179,7 +201,7 @@ Results use the following statuses:
 - `Not Required`: the check was skipped based on the selected requirement profile.
 - `Info`: informational notes about assumptions or skipped optional checks.
 
-## Deployment Notes (If current URL doesn't work)
+<!-- ## Deployment Notes (If current URL doesn't work)
 
 This project is ready to deploy on Streamlit Community Cloud.
 
@@ -196,7 +218,7 @@ To deploy:
 3. Select this repository.
 4. Set the main file path to `app.py`.
 5. Deploy the app.
-6. Paste the deployed URL into the `Deployed Application` section above.
+6. Paste the deployed URL into the `Deployed Application` section above. -->
 
 ## Assumptions
 
@@ -204,7 +226,7 @@ To deploy:
 - OCR output is good enough for text-level comparison.
 - The app is a standalone prototype and does not integrate with COLA or any internal TTB system.
 - The app does not store uploaded labels or application data.
-- Requirement profiles are simplified and intended to demonstrate product thinking, not provide legal advice.
+- Requirement profiles are simplified and intended to demonstrate product thinking, not direct compliance.
 - A human reviewer remains responsible for final regulatory decisions.
 
 ## Limitations and Trade-Offs
@@ -215,7 +237,7 @@ To deploy:
 - Beverage-specific label rules are simplified for the prototype.
 - The system is optimized for explainable matching rather than broad legal analysis.
 - No cloud AI API is used, which improves portability in restricted network environments but limits advanced image understanding.
-- Batch handling can be done better with CSV input intergration for varying application fields, but would reduce easability.
+- Batch CSV matching depends on file names matching the uploaded files. A production system would likely match applications by some internal identifier.
 
 ## Possible Future Improvements
 
