@@ -82,13 +82,13 @@ The app uses fuzzy matching for fields such as brand name and class/type because
 
 ```text
 .
-├── app.py              # Streamlit UI and batch processing workflow
-├── ocr_utils.py        # Image/PDF loading, preprocessing, OCR, and image quality estimate
-├── verification.py     # Field extraction, fuzzy matching, and compliance checks
-├── requirements.txt    # Python dependencies
-├── packages.txt        # System package for Streamlit Cloud deployment
-└── .streamlit/
-    └── config.toml     # Streamlit theme configuration
+|-- app.py              # Streamlit UI and batch processing workflow
+|-- ocr_utils.py        # Image/PDF loading, preprocessing, OCR, and image quality estimate
+|-- verification.py     # Field extraction, fuzzy matching, and compliance checks
+|-- requirements.txt    # Python dependencies
+|-- packages.txt        # System package for Streamlit Cloud deployment
+`-- .streamlit/
+    `-- config.toml     # Streamlit theme configuration
 ```
 
 ## Local Setup
